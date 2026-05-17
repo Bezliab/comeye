@@ -1,0 +1,106 @@
+<nav id="nav">
+  <div class="nav-inner">
+    <a class="nav-logo" href="/" style="cursor: pointer">
+      <div class="nav-logo-icon">
+        <img src="/img/logo.png" alt="Logo" />
+      </div>
+      <div class="nav-logo-text">
+        His Mercy and Glory Bible
+        <span>Church · Est. 2006</span>
+      </div>
+    </a>
+    <div class="nav-links">
+      <a class="nav-link active" href="/">Home</a>
+      <a class="nav-link" href="/about">About</a>
+      <a class="nav-link" href="/services">Services</a>
+      <a class="nav-link" href="/events">Events</a>
+      <a class="nav-link" href="/sermons">Sermons</a>
+      <a class="nav-link" href="/resources">Resources</a>
+      <a class="nav-link" href="/contact">Contact</a>
+      <% if (locals.isAdmin) { %>
+        <a class="nav-link" href="/admin" style="color:var(--green);font-weight:600;">
+          <i class="fa fa-gauge" aria-hidden="true" style="margin-right:4px;"></i>Dashboard
+        </a>
+        <form method="POST" action="/admin/logout" style="display:inline;">
+          <button type="submit" class="nav-cta" style="background:var(--red);border:none;cursor:pointer;font-family:inherit;font-size:0.875rem;font-weight:600;padding:10px 16px;border-radius:8px;color:white;">
+            <i class="fa fa-right-from-bracket" aria-hidden="true" style="margin-right:4px;"></i>Logout
+          </button>
+        </form>
+      <% } %>
+
+    </div>
+    <button
+      aria-label="Menu"
+      class="hamburger"
+      id="hamburger"
+      onclick="toggleMenu()"
+    >
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+<div class="mobile-menu" id="mobile-menu">
+  <a class="mobile-link" href="/"
+    ><i class="fa fa-home" aria-hidden="true" style="margin-right: 8px"></i>
+    Home</a
+  >
+  <a class="mobile-link" href="/about"
+    ><i
+      class="fa fa-book-open"
+      aria-hidden="true"
+      style="margin-right: 8px"
+    ></i>
+    About</a
+  >
+  <a class="mobile-link" href="/services"
+    ><i class="fa fa-calendar" aria-hidden="true" style="margin-right: 8px"></i>
+    Services</a
+  >
+  <a class="mobile-link" href="/events"
+    ><i
+      class="fa fa-calendar-days"
+      aria-hidden="true"
+      style="margin-right: 8px"
+    ></i>
+    Events</a
+  >
+  <a class="mobile-link" href="/sermons"
+    ><i
+      class="fa fa-microphone"
+      aria-hidden="true"
+      style="margin-right: 8px"
+    ></i>
+    Sermons</a
+  >
+  <a class="mobile-link" href="/resources"
+    ><i class="fa fa-folder" aria-hidden="true" style="margin-right: 8px"></i>
+    Resources</a
+  >
+  <a class="mobile-link" href="/contact"
+    ><i class="fa fa-envelope" aria-hidden="true" style="margin-right: 8px"></i>
+    Contact</a
+  >
+  <% if (locals.isAdmin) { %>
+    <a class="mobile-link" href="/admin">
+      <i class="fa fa-gauge" aria-hidden="true" style="margin-right: 8px"></i>Dashboard
+    </a>
+    <form method="POST" action="/admin/logout">
+      <button type="submit" class="mobile-link" style="width:100%;text-align:left;background:none;border:none;cursor:pointer;font-family:inherit;font-size:inherit;color:var(--red);border-bottom:1px solid var(--silver);">
+        <i class="fa fa-right-from-bracket" aria-hidden="true" style="margin-right: 8px"></i>Logout
+      </button>
+    </form>
+  <% } %>
+</div>
+<script>
+  (function () {
+    const path = window.location.pathname.replace(/\/$/, "") || "/";
+    const links = document.querySelectorAll(
+      "#nav a.nav-link, #mobile-menu a.mobile-link",
+    );
+    links.forEach((a) => {
+      const href = (a.getAttribute("href") || "").replace(/\/$/, "") || "/";
+      if (href === path) a.classList.add("active");
+      else a.classList.remove("active");
+    });
+  })();
+</script>

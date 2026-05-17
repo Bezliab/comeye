@@ -1,0 +1,43 @@
+<%- include('../partials/head') %>
+<style>
+  body { background: linear-gradient(135deg, var(--green) 0%, #0d3320 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; }
+</style>
+
+<div class="login-card" style="background:white;border-radius:var(--radius-lg);padding:48px 40px;max-width:420px;width:100%;box-shadow:var(--shadow-lg);">
+  <div class="login-logo" style="text-align:center;margin-bottom:28px;">
+    <div class="login-logo-icon" style="width:56px;height:56px;background:var(--green);border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:24px;color:white;margin-bottom:10px;">
+      <i class="fa fa-lock" aria-hidden="true"></i>
+    </div>
+    <h2 style="font-family:var(--font-head);font-size:1.5rem;font-weight:700;color:var(--green);">Admin Portal</h2>
+    <p style="font-size:0.8rem;color:var(--text-muted);">His Mercy and Glory Bible Church · Staff Only</p>
+  </div>
+
+  <% if (error && error.length) { %>
+    <div style="background:#fdf0ee;border:1px solid var(--red);color:var(--red);padding:10px 14px;border-radius:8px;font-size:0.85rem;margin-bottom:16px;">
+      <%= error %>
+    </div>
+  <% } %>
+
+  <form method="POST" action="/admin/login">
+    <div class="form-group" style="margin-bottom:20px;">
+      <label style="display:block;font-size:0.85rem;font-weight:600;color:var(--text);margin-bottom:8px;">Email Address</label>
+      <input type="email" name="email" placeholder="admin@hismercyandglory.org" required
+        style="width:100%;padding:12px 16px;border:1.5px solid var(--silver-dark);border-radius:8px;font-size:0.9rem;" />
+    </div>
+    <div class="form-group" style="margin-bottom:20px;">
+      <label style="display:block;font-size:0.85rem;font-weight:600;color:var(--text);margin-bottom:8px;">Password</label>
+      <input type="password" name="password" placeholder="••••••••" required
+        style="width:100%;padding:12px 16px;border:1.5px solid var(--silver-dark);border-radius:8px;font-size:0.9rem;" />
+    </div>
+    <button type="submit" class="btn-primary" style="width:100%;justify-content:center;margin-top:4px;">
+      Sign In →
+    </button>
+  </form>
+
+  <p style="text-align:center;font-size:0.75rem;color:var(--text-muted);margin-top:20px;">
+    This area is restricted to authorised staff only.<br>
+    If you're a visitor, <a href="/" style="color:var(--green);">return to the website</a>.
+  </p>
+</div>
+
+<%- include('../partials/scripts') %>

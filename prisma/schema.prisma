@@ -1,0 +1,49 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Announcement {
+  id        Int      @id @default(autoincrement())
+  title     String
+  body      String
+  color     String   @default("green")
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Event {
+  id          Int      @id @default(autoincrement())
+  title       String
+  category    String
+  date        String
+  venue       String
+  description String
+  createdAt   DateTime @default(now())
+}
+
+model Sermon {
+  id        Int      @id @default(autoincrement())
+  title     String
+  speaker   String
+  date      String
+  category  String   @default("Faith")
+  mediaUrl  String?
+  createdAt DateTime @default(now())
+}
+
+model Resource {
+  id          Int      @id @default(autoincrement())
+  title       String
+  category    String
+  description String?
+  filePath    String?
+  fileSize    String?
+  fileType    String?
+  uploadedAt  DateTime @default(now())
+}

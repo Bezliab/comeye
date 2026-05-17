@@ -1,0 +1,349 @@
+<%- include('../partials/head') %> <%- include('../partials/nav') %>
+<div class="page active" id="page-admin">
+  <!-- Dashboard — only reachable if logged in (server enforces this) -->
+  <div id="admin-dashboard">
+    <div class="admin-layout">
+      <div class="admin-sidebar">
+        <div class="admin-sidebar-title">
+          His Mercy and Glory
+          <span>Admin Portal</span>
+        </div>
+        <div
+          class="admin-nav-item active"
+          onclick="showAdminPanel('overview', this)"
+        >
+          <i
+            class="fa fa-chart-bar"
+            aria-hidden="true"
+            style="margin-right: 8px"
+          ></i>
+          Overview
+        </div>
+        <div
+          class="admin-nav-item"
+          onclick="showAdminPanel('announcements', this)"
+        >
+          <i
+            class="fa fa-bell"
+            aria-hidden="true"
+            style="margin-right: 8px"
+          ></i>
+          Announcements
+        </div>
+        <div
+          class="admin-nav-item"
+          onclick="showAdminPanel('events-admin', this)"
+        >
+          <i
+            class="fa fa-calendar"
+            aria-hidden="true"
+            style="margin-right: 8px"
+          ></i>
+          Events
+        </div>
+        <div
+          class="admin-nav-item"
+          onclick="showAdminPanel('sermons-admin', this)"
+        >
+          <i
+            class="fa fa-microphone"
+            aria-hidden="true"
+            style="margin-right: 8px"
+          ></i>
+          Sermons
+        </div>
+        <div
+          class="admin-nav-item"
+          onclick="showAdminPanel('resources-admin', this)"
+        >
+          <i
+            class="fa fa-folder"
+            aria-hidden="true"
+            style="margin-right: 8px"
+          ></i>
+          Resources
+        </div>
+        <div class="admin-nav-item" onclick="showAdminPanel('upload', this)">
+          <i
+            class="fa fa-upload"
+            aria-hidden="true"
+            style="margin-right: 8px"
+          ></i>
+          Upload Files
+        </div>
+        <form method="POST" action="/admin/logout" style="margin-top:auto;border-top:1px solid rgba(255,255,255,0.1);padding-top:4px;">
+          <button type="submit" class="admin-nav-item" style="width:100%;background:none;border:none;color:rgba(255,255,255,0.85);cursor:pointer;font-family:inherit;font-size:inherit;text-align:left;padding:12px 24px;">
+            <i class="fa fa-right-from-bracket" aria-hidden="true" style="margin-right: 8px"></i>
+            Sign Out
+          </button>
+        </form>
+      </div>
+      <div class="admin-content">
+        <!-- Overview Panel -->
+        <div class="admin-panel active" id="panel-overview">
+          <div class="admin-header">
+            <h2>Dashboard Overview</h2>
+            <span style="font-size: 0.85rem; color: var(--text-muted)">
+              Welcome back, <%= adminEmail %> &middot; <%= new Date().toDateString() %>
+            </span>
+          </div>
+          <div class="admin-stat-grid">
+            <div class="admin-stat">
+              <div class="admin-stat-num"><%= stats.announcements %></div>
+              <div class="admin-stat-label">Active Announcements</div>
+            </div>
+            <div class="admin-stat red">
+              <div class="admin-stat-num"><%= stats.events %></div>
+              <div class="admin-stat-label">Upcoming Events</div>
+            </div>
+            <div class="admin-stat yellow">
+              <div class="admin-stat-num"><%= stats.sermons %></div>
+              <div class="admin-stat-label">Sermons Published</div>
+            </div>
+            <div class="admin-stat">
+              <div class="admin-stat-num"><%= stats.resources %></div>
+              <div class="admin-stat-label">Resources Available</div>
+            </div>
+          </div>
+          <div
+            style="
+              background: white;
+              border-radius: var(--radius);
+              padding: 24px;
+              box-shadow: var(--shadow-sm);
+            "
+          >
+            <h3
+              style="
+                font-family: var(--font-head);
+                font-size: 1.3rem;
+                margin-bottom: 16px;
+              "
+            >
+              Quick Actions
+            </h3>
+            <div style="display: flex; gap: 12px; flex-wrap: wrap">
+              <button
+                class="btn-primary"
+                onclick="
+                  showAdminPanel(
+                    'announcements',
+                    document.querySelector('.admin-nav-item:nth-child(2)'),
+                  )
+                "
+              >
+                + New Announcement
+              </button>
+              <button
+                class="btn-red"
+                onclick="
+                  showAdminPanel(
+                    'events-admin',
+                    document.querySelector('.admin-nav-item:nth-child(3)'),
+                  )
+                "
+              >
+                + New Event
+              </button>
+              <button
+                class="btn-outline"
+                onclick="
+                  showAdminPanel(
+                    'upload',
+                    document.querySelector('.admin-nav-item:nth-child(7)'),
+                  )
+                "
+              >
+                <i
+                  class="fa fa-upload"
+                  aria-hidden="true"
+                  style="margin-right: 8px"
+                ></i>
+                Upload File
+              </button>
+              <button
+                class="btn-outline"
+                onclick="
+                  showAdminPanel(
+                    'sermons-admin',
+                    document.querySelector('.admin-nav-item:nth-child(4)'),
+                  )
+                "
+              >
+                + Add Sermon
+              </button>
+            </div>
+          </div>
+        </div>
+        <!-- Announcements Panel -->
+        <div class="admin-panel" id="panel-announcements">
+          <div class="admin-header">
+            <h2>Announcements</h2>
+          </div>
+          <div style="background:white;border-radius:var(--radius);padding:24px;box-shadow:var(--shadow-sm);margin-bottom:24px;">
+            <h4 style="margin-bottom:16px;color:var(--text)">New Announcement</h4>
+            <div class="form-group">
+              <label>Title</label>
+              <input id="ann-title" placeholder="Announcement title..." type="text" />
+            </div>
+            <div class="form-group">
+              <label>Body</label>
+              <textarea id="ann-body" placeholder="Full announcement text..." style="min-height:100px;"></textarea>
+            </div>
+            <div class="form-group">
+              <label>Accent colour</label>
+              <select id="ann-color">
+                <option value="green">Green</option>
+                <option value="red">Red</option>
+                <option value="yellow">Yellow</option>
+              </select>
+            </div>
+            <button class="btn-primary" onclick="saveAnnouncement()">Save Announcement</button>
+          </div>
+          <table class="admin-table">
+            <thead><tr><th>Title</th><th>Date Posted</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody>
+              <% announcements.forEach(function(a) { %>
+              <tr>
+                <td><%= a.title %></td>
+                <td><%= a.createdAt %></td>
+                <td><span class="card-tag tag-<%= a.active ? 'green' : 'silver' %>"><%= a.active ? 'Active' : 'Hidden' %></span></td>
+                <td class="admin-actions">
+                  <button class="admin-btn delete" onclick="deleteAnnouncement(<%= a.id %>)">Delete</button>
+                </td>
+              </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        </div>
+        <!-- Events Panel -->
+        <div class="admin-panel" id="panel-events-admin">
+          <div class="admin-header"><h2>Events</h2></div>
+          <div style="background:white;border-radius:var(--radius);padding:24px;box-shadow:var(--shadow-sm);margin-bottom:24px;">
+            <h4 style="margin-bottom:16px">New Event</h4>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+              <div class="form-group"><label>Event Title</label><input id="evt-title" placeholder="Event name..." type="text" /></div>
+              <div class="form-group"><label>Category</label>
+                <select id="evt-category">
+                  <option value="special">Special</option>
+                  <option value="quarterly">Quarterly</option>
+                  <option value="monthly">Monthly</option>
+                  <option value="midweek">Mid-Week</option>
+                </select>
+              </div>
+              <div class="form-group"><label>Date (or date range)</label><input id="evt-date" placeholder="e.g. Mar 15–17, 2026" type="text" /></div>
+              <div class="form-group"><label>Venue</label><input id="evt-venue" placeholder="Location..." type="text" /></div>
+            </div>
+            <div class="form-group"><label>Description</label><textarea id="evt-desc" placeholder="Full event description..." style="min-height:100px;"></textarea></div>
+            <button class="btn-primary" onclick="saveEvent()">Save Event</button>
+          </div>
+          <table class="admin-table">
+            <thead><tr><th>Title</th><th>Category</th><th>Date</th><th>Actions</th></tr></thead>
+            <tbody>
+              <% events.forEach(function(e) { %>
+              <tr>
+                <td><%= e.title %></td>
+                <td><span class="card-tag tag-<%= e.category === 'special' ? 'red' : e.category === 'quarterly' ? 'yellow' : 'green' %>"><%= e.category %></span></td>
+                <td><%= e.date %></td>
+                <td class="admin-actions">
+                  <button class="admin-btn delete" onclick="deleteEvent(<%= e.id %>)">Delete</button>
+                </td>
+              </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        </div>
+        <!-- Sermons Panel -->
+        <div class="admin-panel" id="panel-sermons-admin">
+          <div class="admin-header"><h2>Sermons</h2></div>
+          <div style="background:white;border-radius:var(--radius);padding:24px;box-shadow:var(--shadow-sm);margin-bottom:24px;">
+            <h4 style="margin-bottom:16px">Add Sermon</h4>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+              <div class="form-group"><label>Sermon Title</label><input id="ser-title" placeholder="Title..." type="text" /></div>
+              <div class="form-group"><label>Preacher</label><input id="ser-speaker" placeholder="Speaker name..." type="text" /></div>
+              <div class="form-group"><label>Date</label><input id="ser-date" placeholder="e.g. Feb 16, 2026" type="text" /></div>
+              <div class="form-group"><label>Category</label>
+                <select id="ser-category">
+                  <option>Faith</option><option>Prayer</option><option>Growth</option><option>Family</option><option>Prophecy</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group"><label>YouTube / Media URL</label><input id="ser-media" placeholder="https://youtube.com/watch?v=..." type="url" /></div>
+            <button class="btn-primary" onclick="saveSermon()">Save Sermon</button>
+          </div>
+          <table class="admin-table">
+            <thead><tr><th>Title</th><th>Preacher</th><th>Date</th><th>Category</th><th>Actions</th></tr></thead>
+            <tbody>
+              <% sermons.forEach(function(s) { %>
+              <tr>
+                <td><%= s.title %></td>
+                <td><%= s.speaker %></td>
+                <td><%= s.date %></td>
+                <td><span class="card-tag tag-green"><%= s.category %></span></td>
+                <td class="admin-actions">
+                  <% if (s.mediaUrl) { %><a href="<%= s.mediaUrl %>" target="_blank" class="admin-btn edit">Watch</a><% } %>
+                  <button class="admin-btn delete" onclick="deleteSermon(<%= s.id %>)">Delete</button>
+                </td>
+              </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        </div>
+        <!-- Resources Panel -->
+        <div class="admin-panel" id="panel-resources-admin">
+          <div class="admin-header"><h2>Resources</h2></div>
+          <table class="admin-table">
+            <thead><tr><th>Title</th><th>Category</th><th>Size</th><th>Uploaded</th><th>Actions</th></tr></thead>
+            <tbody>
+              <% resources.forEach(function(r) { %>
+              <tr>
+                <td><%= r.title %></td>
+                <td><span class="card-tag tag-green"><%= r.category %></span></td>
+                <td><%= r.fileSize %></td>
+                <td><%= r.uploadedAt %></td>
+                <td class="admin-actions">
+                  <% if (r.filePath) { %>
+                    <a href="<%= r.filePath %>" target="_blank" class="admin-btn edit">Download</a>
+                  <% } %>
+                  <button class="admin-btn delete" onclick="deleteResource(<%= r.id %>)">Delete</button>
+                </td>
+              </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        </div>
+        <!-- Upload Panel -->
+        <div class="admin-panel" id="panel-upload">
+          <div class="admin-header"><h2>Upload Files</h2></div>
+          <div style="max-width:640px;">
+            <div class="upload-zone" onclick="document.getElementById('upload-file').click()">
+              <input id="upload-file" accept=".pdf,.docx,.jpg,.png,.mp3,.mp4" style="display:none;" type="file" />
+              <div class="upload-zone-icon"><i class="fa fa-cloud" aria-hidden="true"></i></div>
+              <p><strong>Click to select a file</strong></p>
+              <p style="font-size:0.8rem;margin-top:6px;">Allowed: PDF, DOCX, JPG, PNG, MP3, MP4 · Max 50 MB</p>
+            </div>
+            <div style="background:white;border-radius:var(--radius);padding:24px;box-shadow:var(--shadow-sm);">
+              <h4 style="margin-bottom:16px;">File Details</h4>
+              <div class="form-group"><label>File Title</label><input id="upload-title" placeholder="Human-readable title..." type="text" /></div>
+              <div class="form-group">
+                <label>Category</label>
+                <select id="upload-category">
+                  <option value="BULLETIN">Bulletin</option>
+                  <option value="DEVOTIONAL">Devotional</option>
+                  <option value="PROGRAMME">Programme</option>
+                  <option value="FORM">Form</option>
+                  <option value="ANNOUNCEMENT">Announcement</option>
+                  <option value="MEDIA">Media</option>
+                  <option value="OTHER">Other</option>
+                </select>
+              </div>
+              <div class="form-group"><label>Description</label><textarea id="upload-desc" placeholder="Brief description for visitors..." style="min-height:80px;"></textarea></div>
+              <button id="upload-btn" class="btn-primary" onclick="uploadFile()">Upload &amp; Publish</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<%- include('../partials/footer') %> <%- include('../partials/scripts') %>

@@ -1,39 +1,86 @@
-// routes/public.js
-const express = require('express');
-const router  = express.Router();
-const store   = require('../data/store');
+const express = require("express");
+const router = express.Router();
+const prisma = require("../lib/db");
 
-router.get('/',          (req, res) => res.render('pages/home',      { announcements: store.announcements.filter(a => a.active).slice(0, 4), events: store.events.slice(0, 3) }));
-router.get('/about',     (req, res) => res.render('pages/about'));
-router.get('/services',  (req, res) => res.render('pages/services'));
-router.get('/events',    (req, res) => res.render('pages/events',    { events: store.events }));
-router.get('/sermons',   (req, res) => res.render('pages/sermons',   { sermons: store.sermons }));
-router.get('/resources', (req, res) => res.render('pages/resources', { resources: store.resources }));
-router.get('/contact',   (req, res) => res.render('pages/contact',   { success: false }));
+router.get("/", async (req, res) => {
+  const [announcements, events] = await Promise.all([
+    prisma.announcement.findMany({
+      where: { active: true },
+      orderBy: { createdAt: "desc" },
+      take: 4,
+    }),
+    prisma.event.findMany({ orderBy: { createdAt: "desc" }, take: 3 }),
+  ]);
+  res.render("pages/home", { announcements, events });
+});
 
-// Contact form POST
-router.post('/contact', (req, res) => {
+router.get("/about", (req, res) => res.render("pages/about"));
+router.get("/services", (req, res) => res.render("pages/services"));
+
+router.get("/events", async (req, res) => {
+  const events = await prisma.event.findMany({
+    orderBy: { createdAt: "desc" },
+  });
+  res.render("pages/events", { events });
+});
+
+router.get("/sermons", async (req, res) => {
+  const sermons = await prisma.sermon.findMany({
+    orderBy: { createdAt: "desc" },
+  });
+  res.render("pages/sermons", { sermons });
+});
+
+router.get("/resources", async (req, res) => {
+  const resources = await prisma.resource.findMany({
+    orderBy: { uploadedAt: "desc" },
+  });
+  res.render("pages/resources", { resources });
+});
+
+router.get("/contact", (req, res) =>
+  res.render("pages/contact", { success: false }),
+);
+
+router.post("/contact", (req, res) => {
   const { name, email, subject, message } = req.body;
-  // TODO: wire up an email provider (Nodemailer, SendGrid, etc.)
-  console.log('Contact form submission:', { name, email, subject, message });
-  res.render('pages/contact', { success: true });
+  console.log("Contact form:", { name, email, subject, message });
+  res.render("pages/contact", { success: true });
 });
 
-// Public API — read-only data for the front-end
-router.get('/api/announcements', (req, res) => res.json(store.announcements.filter(a => a.active)));
-router.get('/api/events',        (req, res) => {
-  const { category } = req.query;
-  const data = category ? store.events.filter(e => e.category === category.toLowerCase()) : store.events;
+// Public read-only API
+router.get("/api/announcements", async (req, res) => {
+  const data = await prisma.announcement.findMany({
+    where: { active: true },
+    orderBy: { createdAt: "desc" },
+  });
   res.json(data);
 });
-router.get('/api/sermons',       (req, res) => {
+
+router.get("/api/events", async (req, res) => {
   const { category } = req.query;
-  const data = category ? store.sermons.filter(s => s.category === category) : store.sermons;
+  const data = await prisma.event.findMany({
+    where: category ? { category: category.toLowerCase() } : {},
+    orderBy: { createdAt: "desc" },
+  });
   res.json(data);
 });
-router.get('/api/resources',     (req, res) => {
+
+router.get("/api/sermons", async (req, res) => {
   const { category } = req.query;
-  const data = category ? store.resources.filter(r => r.category === category.toUpperCase()) : store.resources;
+  const data = await prisma.sermon.findMany({
+    where: category ? { category } : {},
+    orderBy: { createdAt: "desc" },
+  });
+  res.json(data);
+});
+
+router.get("/api/resources", async (req, res) => {
+  const { category } = req.query;
+  const data = await prisma.resource.findMany({
+    where: category ? { category: category.toUpperCase() } : {},
+    orderBy: { uploadedAt: "desc" },
+  });
   res.json(data);
 });
 
